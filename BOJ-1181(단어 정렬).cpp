@@ -24,7 +24,7 @@ int main() {
 		v.push_back(make_pair(s, size));
 	}
 
-	//stable_sort ¸»°í ÀÏ¹İ sort¸¦ ½è´õ´Ï Æ²·Ç´Ù°í ³ª¿Â´Ù... ÀÌÀ¯´Â Àß ¸ğ¸£°Ú´Ù.
+	//stable_sort ë§ê³  ì¼ë°˜ sortë¥¼ ì¼ë”ë‹ˆ í‹€ë ·ë‹¤ê³  ë‚˜ì˜¨ë‹¤... ì´ìœ ëŠ” ì˜ ëª¨ë¥´ê² ë‹¤.
 	stable_sort(v.begin(), v.end());
 	stable_sort(v.begin(), v.end(), cmp);
 	auto last = unique(v.begin(), v.end());
