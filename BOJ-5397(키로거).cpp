@@ -1,6 +1,6 @@
-//2019-11-19 BOJ-5397(Å°·Î°Å)
-//linked list·Î ±¸ÇöÇß´Ù. '-' ÀÛ¾÷ Áß Æ÷ÀÎÅÍ¿¡ ´ëÇÑ ÀÌÇØ°¡ ºÎÁ·ÇØ¼­
-//»ğÁúÀ» Çß´Ù, ¼Õ°¡¶ôÀ¸·Î Á÷Á¢ °è»êÇÏ¸ç Ç®¾ú´Ù...
+//2019-11-19 BOJ-5397(í‚¤ë¡œê±°)
+//linked listë¡œ êµ¬í˜„í–ˆë‹¤. '-' ì‘ì—… ì¤‘ í¬ì¸í„°ì— ëŒ€í•œ ì´í•´ê°€ ë¶€ì¡±í•´ì„œ
+//ì‚½ì§ˆì„ í–ˆë‹¤, ì†ê°€ë½ìœ¼ë¡œ ì§ì ‘ ê³„ì‚°í•˜ë©° í’€ì—ˆë‹¤...
 #include <iostream>
 #include <list>
 #include <string>
@@ -17,14 +17,14 @@ int main(void) {
 	for (int i = 0; i < n; i++)
 	{
 		string in;
-		list<char> pw;	//insert, erase¸¦ ¾²¹Ç·Î list.
-		list<char>::iterator it = pw.end();	//itÀÇ ¿ŞÂÊ¿¡ »ğÀÔÇÏ±â ¶§¹®¿¡ end.
+		list<char> pw;	//insert, eraseë¥¼ ì“°ë¯€ë¡œ list.
+		list<char>::iterator it = pw.end();	//itì˜ ì™¼ìª½ì— ì‚½ì…í•˜ê¸° ë•Œë¬¸ì— end.
 
 		cin >> in;
 
 		for (auto i : in)
 		{
-			auto cpyit = it;	//erase½Ã it°¡ »ç¶óÁö¹Ç·Î º¹»çÇØ³õÀ½.
+			auto cpyit = it;	//eraseì‹œ itê°€ ì‚¬ë¼ì§€ë¯€ë¡œ ë³µì‚¬í•´ë†“ìŒ.
 			if (i != '<' && i != '>' && i != '-')
 			{
 				pw.insert(it, i);
@@ -34,7 +34,7 @@ int main(void) {
 			if (i == '-')
 				if (it != pw.begin())
 				{
-					pw.erase(--cpyit);	//Æ÷ÀÎÅÍ¿¡ ´ëÇÑ ÀÌÇØ°¡ ºÎÁ·ÇØ¼­ »ğÁúÀ» Çß´Ù...
+					pw.erase(--cpyit);	//í¬ì¸í„°ì— ëŒ€í•œ ì´í•´ê°€ ë¶€ì¡±í•´ ì‚½ì§ˆì„ í–ˆë‹¤...
 				}
 		}
 		for (auto i : pw)	cout << i;
