@@ -1,4 +1,5 @@
 //2019-11-14 BOJ-1181(단어 정렬)
+//단어의 길이 & 사전 순으로 정렬하는 문제이다, pair를 사용해 풀었다.
 using namespace std;
 #include <iostream>
 #include <algorithm>
@@ -26,6 +27,7 @@ int main() {
 	}
 
 	//stable_sort 말고 일반 sort를 썼더니 틀렷다고 나온다... 이유는 잘 모르겠다.
+	//로직을 수정하면 일반 소트로 가능하다.
 	stable_sort(v.begin(), v.end());
 	stable_sort(v.begin(), v.end(), cmp);
 	auto last = unique(v.begin(), v.end());
