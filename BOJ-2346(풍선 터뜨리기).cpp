@@ -1,7 +1,7 @@
-//2019-11-18 BOJ-2346(Ç³¼± ÅÍ¶ß¸®±â)
-//Ã³À½¿¡ Á¢±ÙÀ» ¿ÏÀü Àß¸øÇØ¼­ ÄÚµå¸¦ ¾þ¾ú´Ù. µÎ¹øÂ° Á¢±ÙÀº ÀßÇßÁö¸¸
-//v.size() ¿Í ±×³É int °ªÀÇ ¹Ì¹¦ÇÑ Â÷ÀÌ(unsigned) ¶§¹®¿¡ Æ²·È´Ù.
-//ÁÖ¸»¿¡µµ ºÙµé°í ÀÖ¾ú´Âµ¥ °³Â¥Áõ³­´Ù. ÇÏÁö¸¸ ÀÌ·±°Ô ÇÁ·Î±×·¡¸ÓÀÇ ÀÏ»óÀÌ¶ó°íµé ÇÏ´ø°¡.
+//2019-11-18 BOJ-2346(í’ì„  í„°ëœ¨ë¦¬ê¸°)
+//ì²˜ìŒì— ì ‘ê·¼ì„ ì™„ì „ ìž˜ëª»í•´ì„œ ì½”ë“œë¥¼ ê°ˆì•˜ë‹¤. ì´í›„ì— ì ‘ê·¼ì€ ìž˜í–ˆì§€ë§Œ
+//v.size() ì™€ ê·¸ëƒ¥ int ê°’ì˜ ë¯¸ë¬˜í•œ ì°¨ì´(unsigned) ë•Œë¬¸ì— í‹€ë ¸ë‹¤.
+//ì£¼ë§ì—ë„ ë¶™ë“¤ê³  ìžˆì—ˆëŠ”ë° ê°œì§œì¦ë‚œë‹¤. í•˜ì§€ë§Œ ì´ëŸ°ê²Œ í”„ë¡œê·¸ëž˜ë¨¸ì˜ ì¼ìƒì´ë¼ê³ ë“¤ í•˜ë˜ê°€.
 #include <iostream>
 #include <vector>
 
@@ -32,9 +32,9 @@ int main(void)
 		if (--n == 0)	break;
 
 		v.erase(v.begin() + idx);
-		idx += tmp;	//Áö¿ì°í ÀÌµ¿
-		if (tmp > 0)	idx--;	//¾ÕÁ·À¸·Î ÀÌµ¿ÇÑ´Ù¸é ÇÑÄ­À» Áö¿ö¹ö·Á¼­ ´Þ¶óÁø Å©±â °è»ê(À½¼ö´Â °è»êµû·ÎÇÔ)
-		if (idx < 0)	idx = n + idx % n;	//idxÀ½¼ö¶ó¸é ¸ðµâ·¯¸¦ 2¹ø ÇØÁà¾ßÇÔ
+		idx += tmp;	//ì§€ìš°ê³  ì´ë™
+		if (tmp > 0)	idx--;	//ì•žì¡±ìœ¼ë¡œ ì´ë™í•œë‹¤ë©´ í•œì¹¸ì„ ì§€ì›Œë²„ë ¤ì„œ ë‹¬ë¼ì§„ í¬ê¸° ê³„ì‚°(ìŒìˆ˜ëŠ” ê³„ì‚°ë”°ë¡œí•¨)
+		if (idx < 0)	idx = n + idx % n;	//idxìŒìˆ˜ë¼ë©´ ëª¨ë“ˆëŸ¬ë¥¼ 2ë²ˆ í•´ì¤˜ì•¼í•¨
 		idx %= n;
 	}
 }
