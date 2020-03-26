@@ -1,7 +1,7 @@
 /*
 	2020-03-25 ~ 2020-?-?
 
-	C++ »ç¿ëÇÑ ¿À¸ñ ¸¸µé±â
+	C++ ì‚¬ìš©í•œ ì˜¤ëª© ë§Œë“¤ê¸°
 */
 #include <iostream>
 #define LEN 19
@@ -9,13 +9,101 @@ using namespace std;
 
 struct Logic
 {
+	char time = 1, posX, posY;
+	int map[LEN][LEN]{ 0 };
+
 	int** dat;
-	char time = 1;
-	short posX, posY, game = 0;
-	char map[LEN][LEN]{ 0 };
 
-
+	int Mok();
 };
+
+// ì˜¤ëª©ì„ íŒë‹¨í•¨.
+int Logic::Mok()
+{
+	short flag = 0;
+
+	// ì„¸ë¡œ
+	for (int i = 1; i <= 4; i++)
+	{
+		if (map[posX][posY] == map[posX][posY + i])
+			flag++;
+		else
+			break;
+	}
+
+	for (int i = 1; i <= 4; i++)
+	{
+		if (map[posX][posY] == map[posX][posY - i])
+			flag++;
+		else
+			break;
+	}
+
+	if (flag >= 4)	return time;
+	else flag = 0;
+
+	// ê°€ë¡œ
+	for (int i = 1; i <= 4; i++)
+	{
+		if (map[posX][posY] == map[posX + i][posY])
+			flag++;
+		else
+			break;
+	}
+
+	for (int i = 1; i <= 4; i++)
+	{
+		if (map[posX][posY] == map[posX - i][posY])
+			flag++;
+		else
+			break;
+	}
+
+	if (flag >= 4)	return time;
+	else flag = 0;
+
+	// ëŒ€ê° 1
+	for (int i = 1; i <= 4; i++)
+	{
+		if (map[posX][posY] == map[posX + i][posY + i])
+			flag++;
+		else
+			break;
+	}
+
+	for (int i = 1; i <= 4; i++)
+	{
+		if (map[posX][posY] == map[posX - i][posY - i])
+			flag++;
+		else
+			break;
+	}
+
+	if (flag >= 4)	return time;
+	else flag = 0;
+
+	// ëŒ€ê° 2
+	for (int i = 1; i <= 4; i++)
+	{
+		if (map[posX][posY] == map[posX + i][posY - i])
+			flag++;
+		else
+			break;
+	}
+
+	for (int i = 1; i <= 4; i++)
+	{
+		if (map[posX][posY] == map[posX - i][posY + i])
+			flag++;
+		else
+			break;
+	}
+
+	if (flag >= 4)	return time;
+	else flag = 0;
+
+	return 0;
+}
 
 struct Render
 {
@@ -25,15 +113,33 @@ struct Render
 	void Rend(const Logic &L);
 };
 
+// ëŒì„ ë†“ì„ ìë¦¬ë¥¼ ì…ë ¥ë°›ìŒ.
 void Render::InputPosition(Logic &L)
 {
+	if (L.time == 1)
+		cout << "Black's Turn, ";
+	else
+		cout << "White's Turn, ";
+
 	cout << "Input Position : ";
 	cin >> L.posX >> L.posY;
+
+	if (L.posX >= '0' && L.posX <= '9')
+		L.posX -= '0';
+	else if (L.posX >= 'a' && L.posX <= 'i')
+		L.posX -= 87;
+
+	if (L.posY >= '0' && L.posY <= '9')
+		L.posY -= '0';
+	else if (L.posY >= 'a' && L.posY <= 'i')
+		L.posY -= 87;
+
 	L.map[L.posX][L.posY] = L.time;
 	if (L.time == 1)	L.time++;
 	else L.time--;
 }
 
+// ë§µê³¼ ëŒì„ ê·¸ë¦¼.
 void Render::Rend(const Logic& L)
 {
 	system("cls");
@@ -48,44 +154,44 @@ void Render::Rend(const Logic& L)
 	for (int i = 0; i < LEN; i++)
 	{
 
-		if (i == 0)	// Ã¹Â° ÁÙ
+		if (i == 0)	// ì²«ì§¸ ì¤„
 		{
 			cout << 0;
 
 			for (int j = 0; j < LEN; j++)
 			{
-				if (L.map[i][j] == 1)		//³õÀÎ µ¹ÀÌ ÈæÀÏ ½Ã
-					cout << "¡Û";
+				if (L.map[i][j] == 1)		//ë†“ì¸ ëŒì´ í‘ì¼ ì‹œ
+					cout << "â—‹";
 
-				else if (L.map[i][j] == 2)	//³õÀÎ µ¹ÀÌ ¹éÀÏ ½Ã
-					cout << "¡Ü";
+				else if (L.map[i][j] == 2)	//ë†“ì¸ ëŒì´ ë°±ì¼ ì‹œ
+					cout << "â—";
 
-				else						//³õÀÎ µ¹ÀÌ ¾øÀ» ½Ã
+				else						//ë†“ì¸ ëŒì´ ì—†ì„ ì‹œ
 				{
-					if (j == 0)			cout << "¦£";
-					else if (j == LEN - 1)	cout << "¦¤";
-					else				cout << "¦¨";
+					if (j == 0)			cout << "â”Œ";
+					else if (j == LEN - 1)	cout << "â”";
+					else				cout << "â”¬";
 				}
 			}
 		}
 
-		else if (i == LEN - 1)	// ¸¶Áö¸· ÁÙ
+		else if (i == LEN - 1)	// ë§ˆì§€ë§‰ ì¤„
 		{
 			cout << 'i';
 
 			for (int j = 0; j < LEN; j++)
 			{
-				if (L.map[i][j] == 1)		//³õÀÎ µ¹ÀÌ ÈæÀÏ ½Ã
-					cout << "¡Û";
+				if (L.map[i][j] == 1)		//ë†“ì¸ ëŒì´ í‘ì¼ ì‹œ
+					cout << "â—‹";
 
-				else if (L.map[i][j] == 2)	//³õÀÎ µ¹ÀÌ ¹éÀÏ ½Ã
-					cout << "¡Ü";
+				else if (L.map[i][j] == 2)	//ë†“ì¸ ëŒì´ ë°±ì¼ ì‹œ
+					cout << "â—";
 
-				else						//³õÀÎ µ¹ÀÌ ¾øÀ» ½Ã
+				else						//ë†“ì¸ ëŒì´ ì—†ì„ ì‹œ
 				{
-					if (j == 0)			cout << "¦¦";
-					else if (j == LEN - 1)	cout << "¦¥";
-					else				cout << "¦ª";
+					if (j == 0)			cout << "â””";
+					else if (j == LEN - 1)	cout << "â”˜";
+					else				cout << "â”´";
 				}
 			}
 		}
@@ -98,17 +204,17 @@ void Render::Rend(const Logic& L)
 
 			for (int j = 0; j < LEN; j++)
 			{
-				if (L.map[i][j] == 1)		//³õÀÎ µ¹ÀÌ ÈæÀÏ ½Ã
-					cout << "¡Û";
+				if (L.map[i][j] == 1)		//ë†“ì¸ ëŒì´ í‘ì¼ ì‹œ
+					cout << "â—‹";
 
-				else if (L.map[i][j] == 2)	//³õÀÎ µ¹ÀÌ ¹éÀÏ ½Ã
-					cout << "¡Ü";
+				else if (L.map[i][j] == 2)	//ë†“ì¸ ëŒì´ ë°±ì¼ ì‹œ
+					cout << "â—";
 
-				else						//³õÀÎ µ¹ÀÌ ¾øÀ» ½Ã
+				else						//ë†“ì¸ ëŒì´ ì—†ì„ ì‹œ
 				{
-					if (j == 0)			cout << "¦§";
-					else if (j == LEN - 1)	cout << "¦©";
-					else				cout << "¦«";
+					if (j == 0)			cout << "â”œ";
+					else if (j == LEN - 1)	cout << "â”¤";
+					else				cout << "â”¼";
 				}
 			}
 		}
@@ -120,12 +226,27 @@ int main()
 {
 	Logic L;
 	Render R;
+	Logic* lp = &L;
+	Render* rp = &R;
 	
+
 	R.Rend(L);
 
-	while (L.game == 0)
+	while (1)
 	{
 		R.InputPosition(L);
 		R.Rend(L);
+
+		int game = L.Mok();
+		if (game == 2)
+		{
+			cout << "Black Win!\n";
+			break;
+		}
+		else if (game == 1)
+		{
+			cout << "White Win!\n";
+			break;
+		}
 	}
 }
