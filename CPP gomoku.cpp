@@ -1,6 +1,5 @@
 /*
 	2020-03-25 ~ 2020-?-?
-
 	C++ 사용한 오목 만들기
 */
 #include <iostream>
@@ -11,8 +10,7 @@ struct Logic
 {
 	char time = 1, posX, posY;
 	int map[LEN][LEN]{ 0 };
-
-	int** dat;
+	struct Render* rp;
 
 	int Mok();
 };
@@ -107,40 +105,39 @@ int Logic::Mok()
 
 struct Render
 {
-	int** dat;
-
-	void InputPosition(Logic& L);
-	void Rend(const Logic &L);
+	struct Logic* lp;
+	void InputPosition(Logic* L);
+	void Rend(const Logic* L);
 };
 
 // 돌을 놓을 자리를 입력받음.
-void Render::InputPosition(Logic &L)
+void Render::InputPosition(Logic* L)
 {
-	if (L.time == 1)
+	if (L->time == 1)
 		cout << "Black's Turn, ";
 	else
 		cout << "White's Turn, ";
 
 	cout << "Input Position : ";
-	cin >> L.posX >> L.posY;
+	cin >> L->posX >> L->posY;
 
-	if (L.posX >= '0' && L.posX <= '9')
-		L.posX -= '0';
-	else if (L.posX >= 'a' && L.posX <= 'i')
-		L.posX -= 87;
+	if (L->posX >= '0' && L->posX <= '9')
+		L->posX -= '0';
+	else if (L->posX >= 'a' && L->posX <= 'i')
+		L->posX -= 87;
 
-	if (L.posY >= '0' && L.posY <= '9')
-		L.posY -= '0';
-	else if (L.posY >= 'a' && L.posY <= 'i')
-		L.posY -= 87;
+	if (L->posY >= '0' && L->posY <= '9')
+		L->posY -= '0';
+	else if (L->posY >= 'a' && L->posY <= 'i')
+		L->posY -= 87;
 
-	L.map[L.posX][L.posY] = L.time;
-	if (L.time == 1)	L.time++;
-	else L.time--;
+	L->map[L->posX][L->posY] = L->time;
+	if (L->time == 1)	L->time++;
+	else L->time--;
 }
 
 // 맵과 돌을 그림.
-void Render::Rend(const Logic& L)
+void Render::Rend(const Logic* L)
 {
 	system("cls");
 	cout << "  ";
@@ -160,10 +157,10 @@ void Render::Rend(const Logic& L)
 
 			for (int j = 0; j < LEN; j++)
 			{
-				if (L.map[i][j] == 1)		//놓인 돌이 흑일 시
+				if (L->map[i][j] == 1)		//놓인 돌이 흑일 시
 					cout << "○";
 
-				else if (L.map[i][j] == 2)	//놓인 돌이 백일 시
+				else if (L->map[i][j] == 2)	//놓인 돌이 백일 시
 					cout << "●";
 
 				else						//놓인 돌이 없을 시
@@ -181,10 +178,10 @@ void Render::Rend(const Logic& L)
 
 			for (int j = 0; j < LEN; j++)
 			{
-				if (L.map[i][j] == 1)		//놓인 돌이 흑일 시
+				if (L->map[i][j] == 1)		//놓인 돌이 흑일 시
 					cout << "○";
 
-				else if (L.map[i][j] == 2)	//놓인 돌이 백일 시
+				else if (L->map[i][j] == 2)	//놓인 돌이 백일 시
 					cout << "●";
 
 				else						//놓인 돌이 없을 시
@@ -204,10 +201,10 @@ void Render::Rend(const Logic& L)
 
 			for (int j = 0; j < LEN; j++)
 			{
-				if (L.map[i][j] == 1)		//놓인 돌이 흑일 시
+				if (L->map[i][j] == 1)		//놓인 돌이 흑일 시
 					cout << "○";
 
-				else if (L.map[i][j] == 2)	//놓인 돌이 백일 시
+				else if (L->map[i][j] == 2)	//놓인 돌이 백일 시
 					cout << "●";
 
 				else						//놓인 돌이 없을 시
@@ -226,16 +223,17 @@ int main()
 {
 	Logic L;
 	Render R;
-	Logic* lp = &L;
-	Render* rp = &R;
-	
 
-	R.Rend(L);
+	L.rp = &R;
+	R.lp = &L;
+
+
+	R.Rend(R.lp);
 
 	while (1)
 	{
-		R.InputPosition(L);
-		R.Rend(L);
+		R.InputPosition(R.lp);
+		R.Rend(R.lp);
 
 		int game = L.Mok();
 		if (game == 2)
