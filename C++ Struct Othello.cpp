@@ -21,7 +21,7 @@ struct Logic
 	void makeData();			// 2차원 배열을 힙에 동적 할당한다
 	void deleteData();			// 힙메모리에 생성시킨 공간을 해재시킴
 	bool putStone(int, int);	// 특정 위치의 값을 '1', '2'로 변경시킨다
-	bool check(int, int);		// 특정 위치에서 가로, 세로, 대각의 데이터를 탐색한다
+	void check(int, int);		// 특정 위치에서 가로, 세로, 대각의 데이터를 탐색한다
 	void add(int, int&, int&);	// 탐색시 캄색 커서의 위치를 이동시킴
 };
 
@@ -51,7 +51,7 @@ bool Logic::putStone(int r, int c)
 	if (dat[r][c] > 0)	return false;	//이미 데이터가 잇는 상태면 취소
 
 	dat[r][c] = turn + 1;	// 배열값을 1또는 2로 수정
-	if (check(r, c))	return true;
+	check(r, c);			// 돌을 놓을 수 있는지 체크
 
 	turn = 1 - turn;		// 턴 변경
 	return false;
@@ -78,52 +78,180 @@ void Logic::add(int type, int& r, int& c)	// 참조매개인자(&)는 함수 외
 
 #define MIN(X,Y) (((X) < (Y)) ? (X) : (Y))	//매크로 함수 구성
 
-bool Logic::check(int pr, int pc)			// (pr, pc) : 좌표 지점
+void Logic::check(int pr, int pc)			// (pr, pc) : 좌표 지점
 {
 	int cnt = 0, current = turn + 1, flag = 0;
-	int r, c;
+	int r, c, flag1, flag2, flag3, flag4, rev = 0;
 
 	// check horizontal, 수평 체크
 	for (c = 0; c < size; add(0, pr, c))	// (pr, 0) : 좌표지점 기준 왼쪽 끝
 	{
-		if (dat[pr][c] == current)	flag++;
-		else if (dat[pr][c] != current && dat[pr][c] != 0 &&  flag == 1)	dat[pr][c] = current;
-
-		if (cnt == 5)	return true;
+		if (pc > 0 && pc < 7 && dat[pr][pc + 1] == current && dat[pr][pc - 1] == current)	flag = -1;
+		if (flag == 1 && dat[pr][c] == 0)
+		{
+			flag = 0;
+		}
+		if (dat[pr][c] == current)
+		{
+			flag++;
+			if (flag >= 3 && rev != 0)	continue;
+			if (flag == 2 && rev == 0)
+			{
+				flag--;
+				flag1 = c + 1;
+			}
+			if (flag == 2)	flag2 = c;
+			else flag1 = c + 1;
+		}
+		else if (flag == 1 && dat[pr][c] != 0)
+		{
+				rev++;
+		}
+	}
+	if (flag >= 2)
+	{
+		for (c = flag1; c < flag2; add(0, pr, c))
+		{
+			if (dat[pr][c] == 0 || dat[pr][c + 1] == 0)	break;
+			dat[pr][c] = current;
+		}
+		cnt++;
 	}
 
+	rev = flag = flag1 = flag2 = 0;
 	// check vertical, 수직 체크
-	cnt = 0;
 	for (r = 0; r < size; add(1, r, pc))	// (0, pc) : 좌표지점 기준 위쪽 끝
 	{
-		if (dat[r][pc] == 0 || current != dat[r][pc]) { current = dat[r][pc]; cnt = 1; }
-		else cnt++;
-		if (cnt == 5)	return true;
+		if (pr > 0 && pr < 7 && dat[pr + 1][pc] == current && dat[pr - 1][pc] == current)	flag = -1;
+		if (flag == 1 && dat[r][pc] == 0)
+		{
+			flag = 0;
+		}
+		if (dat[r][pc] == current)
+		{
+			flag++;
+			if (flag >= 3 && rev != 0)	continue;
+			if (flag == 2 && rev == 0)
+			{
+				flag--;
+				flag1 = r + 1;
+			}
+			if (flag == 2)	flag2 = r;
+			else flag1 = r + 1;
+		}
+		else if (flag == 1 && dat[r][pc] != 0)
+		{
+			rev++;
+		}
+	}
+	if (flag >= 2)
+	{
+		for (r = flag1; r < flag2; add(1, r, pc))
+		{
+			if (dat[r][pc] == 0 || dat[r + 1][pc] == 0)	break;
+			dat[r][pc] = current;
+		}
+		cnt++;
 	}
 
 	// check right-down, 우하 대각 체크, 대각을 따라 좌표기준 우하 맨 위 좌표를 찾는다.
 	r = pr - MIN(pr, pc);
 	c = pc - MIN(pr, pc);
-	cnt = 0;
+	rev = flag = flag1 = flag2 = flag3 = flag4 = 0;
 	for (; r < size && c < size; add(2, r, c))	// (r, c) : 죄표기준 우하 대각의 첫 위치부터 시작
 	{
-		if (dat[r][c] == 0 || current != dat[r][c]) { current = dat[r][c]; cnt = 1; }
-		else cnt++;
-		if (cnt == 5)	return true;
+		if (pr > 0 && pr < 7 && dat[pr + 1][pc + 1] == current && dat[pr - 1][pc - 1] == current && pc > 0 && pc < 7)	flag = -1;
+		if (flag == 1 && dat[r][c] == 0)
+		{
+			flag = 0;
+		}
+		if (dat[r][c] == current)
+		{
+			flag++;
+			if (flag >= 3 && rev != 0)	continue;
+			if (flag == 2 && rev == 0)
+			{
+				flag--;
+				flag1 = r + 1;
+				flag3 = c + 1;
+			}
+			if (flag == 2)
+			{
+				flag2 = r;
+				flag4 = c;
+			}
+			else
+			{
+				flag1 = r + 1;
+				flag3 = c + 1;
+			}
+		}
+		else if (flag == 1 && dat[r][c] != 0)
+		{
+			rev++;
+		}
+	}
+	if (flag >= 2)
+	{
+		r = flag1;	c = flag3;
+		for (; r < flag2 && c < flag4; add(2, r, c))
+		{
+			if (dat[r][c] == 0 || dat[r + 1][c + 1] == 0)	break;
+			dat[r][c] = current;
+		}
+		cnt++;
 	}
 
-	// check right-up, 우상 대각 체크, 대각을 따라 좌표기준 우상 맨 아래 좌표를 찾는다.
+	// check right-up, 우상 대각 체크, 대각을 따라 좌표기준 우상 맨 밑 좌표를 찾는다.
 	r = pr + MIN(size - 1 - pr, pc);
 	c = pc - MIN(size - 1 - pr, pc);
-	cnt = 0;
+	rev = flag = flag1 = flag2 = flag3 = flag4 = 0;
 	for (; r >= 0 && c < size; add(3, r, c))	// (r, c) : 죄표기준 우상 대각의 첫 위치부터 시작
 	{
-		if (dat[r][c] == 0 || current != dat[r][c]) { current = dat[r][c]; cnt = 1; }
-		else cnt++;
-		if (cnt == 5)	return true;
+		if ((pr > 0 && pr < 7 && pc > 0 && pc < 7) && dat[pr - 1][pc + 1] == 0 && dat[pr + 1][pc - 1] == current)	flag = 0;
+		if (flag == 1 && dat[r][c] == 0)
+		{
+			flag = 0;
+		}
+		if (dat[r][c] == current)
+		{
+			flag++;
+			if (flag >= 3 && rev != 0)	continue;
+			if (flag == 2 && rev == 0)
+			{
+				flag--;
+				flag1 = r - 1;
+				flag3 = c + 1;
+			}
+			if (flag == 2)
+			{
+				flag2 = r;
+				flag4 = c;
+			}
+			else
+			{
+				flag1 = r - 1;
+				flag3 = c + 1;
+			}
+		}
+		else if (flag == 1 && dat[r][c] != 0)
+		{
+			rev++;
+		}
+	}
+	if (flag >= 2)
+	{
+		r = flag1;	c = flag3;
+		for (; r >= flag2 && c < flag4; add(3, r, c))
+		{
+			if (dat[r][c] == 0 || dat[r - 1][c + 1] == 0)	break;
+			dat[r][c] = current;
+		}
+		cnt++;
 	}
 
-	return false;
+	if (cnt == 0)
+		dat[pr][pc] = 0;
 }
 
 struct Render
@@ -229,7 +357,12 @@ int main()
 		else cout << "White(○)  turn, ";
 		cout << "Input Position : ";
 		cin >> pos;	// 위치 입력
-		if (strcmp(pos, "gg") == 0)	break;	// 중간 탈주 시 gg 이용
+		if (strcmp(pos, "gg") == 0)
+		{
+			if (lg.turn == 0)	cout << "White(○) Win!";
+			else cout << " Black (●) Win! ";
+			break;	// 게임 오버 시 gg 이용
+		}
 
 		// 입력한 문자열을 분석해 Logic쪽의 데이터를 변경, 분석해 결과를 받아둠
 		bGameOver = lg.putStone(rd.getIndex(pos[0]), rd.getIndex(pos[1]));
