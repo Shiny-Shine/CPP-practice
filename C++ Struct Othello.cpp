@@ -2,6 +2,7 @@
 	2020-04-02 ~ ??? C++ Othello
 	2020-04-02 현재 check 제외 전부 구현
 	2020-04-08 로직 전부 수정
+	2020-04-10 완성
 */
 
 #include <iostream>
@@ -15,12 +16,27 @@ struct Logic
 	int** dat = nullptr;		// 2차원 배열을 만들어서 주소를 기억시킬 포인터 변수
 	int size = LEN;	// 오목판의 사이즈
 	int turn = 0;	// 백돌, 흑돌 차례를 나타냄
+	int black, white;	//돌 개수
 
 	void makeData();
 	void deleteData();
+	void checkStone(void);
 	bool putStone(int, int);
-	bool checkAndReverse(int, int);	
+	void checkAndReverse(int, int);
 };
+
+void Logic::checkStone()
+{
+	black = 0, white = 0;
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			if (dat[i][j] == 1)	black++;
+			else if (dat[i][j] == 2)	white++;
+		}
+	}
+}
 
 void Logic::makeData()
 {
@@ -46,8 +62,9 @@ void Logic::deleteData()
 bool Logic::putStone(int r, int c)
 {
 	if (dat[r][c] > 0)	return false;	//이미 데이터가 있는 상태면 취소
+	if (white + black == 64)	return true;
 
-	!checkAndReverse(r, c);			// 돌을 놓을 수 있는지 체크
+	checkAndReverse(r, c);			// 돌을 놓을 수 있는지 체크
 
 	dat[r][c] = turn + 1;	// 배열값을 1또는 2로 수정
 
@@ -56,7 +73,7 @@ bool Logic::putStone(int r, int c)
 	// 이 함수의 반환값이 true 면 게임을 종료시킨다
 }
 
-bool Logic::checkAndReverse(int r, int c)			// (pr, pc) : 좌표 지점
+void Logic::checkAndReverse(int r, int c)			// (pr, pc) : 좌표 지점
 {
 	int pr = r, pc = c, flag = 0, cnt = 0, current = turn + 1;
 
@@ -210,7 +227,6 @@ struct Render
 {
 	int** dat = nullptr;	//데이터가 있는 주소
 	int size = LEN;
-	int black = 0, white = 0;
 
 	void setData(int**);		// 데이커가 있는 주소를 멤버 변수로 연결(Logic.dat -> Render.dat)
 	void printBoard();			// 전체 바둑판을 그림
@@ -252,16 +268,6 @@ void Render::printBoard()
 	}
 	cout << 7 << '\n';
 	cout << "└─┴─┴─┴─┴─┴─┴─┴─┘\n";
-
-	black = 0, white = 0;
-	for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 8; j++)
-		{
-			if (dat[i][j] == 1)	black++;
-			else if (dat[i][j] == 2)	white++;
-		}
-	}
 }
 
 string Render::getString(string str, int r, int c)
@@ -295,18 +301,20 @@ int main()
 		rd.printBoard();	// 바둑판 출력
 		if (bGameOver)		// 게임 종료 체크
 		{
+			if (lg.white > lg.black)	cout << "White(○) Win!";
+			else cout << " Black (●) Win! ";
 			cout << "Game Over\n";
 			break;
 		}
 
-		cout << "Black (●) = " << rd.black << ", " << "White(○) = " << rd.white << '\n';
+		cout << "Black (●) = " << lg.black << ", " << "White(○) = " << lg.white << '\n';
 		if (lg.turn == 0)	cout << "Black (●)turn, ";
 		else cout << "White(○)  turn, ";
 		cout << "Input Position : ";
 		cin >> pos;	// 위치 입력
 		if (strcmp(pos, "gg") == 0)
 		{
-			if (lg.turn == 0)	cout << "White(○) Win!";
+			if (lg.white > lg.black)	cout << "White(○) Win!";
 			else cout << " Black (●) Win! ";
 			break;	// 게임 오버 시 gg 이용
 		}
