@@ -22,7 +22,7 @@ struct Logic
 	void deleteData();
 	void checkStone(void);
 	bool putStone(int, int);
-	void checkAndReverse(int, int);
+	int checkAndReverse(int, int);
 	void add(int, int&, int&);
 };
 
@@ -54,10 +54,10 @@ void Logic::makeData(int g)
 	// 오델로라면 시작 돌 놓기
 	if (g == 2)
 	{
-	dat[3][3] = 2;
-	dat[4][4] = 2;
-	dat[3][4] = 1;
-	dat[4][3] = 1;
+		dat[3][3] = 2;
+		dat[4][4] = 2;
+		dat[3][4] = 1;
+		dat[4][3] = 1;
 	}
 }
 
@@ -70,26 +70,155 @@ void Logic::deleteData()
 bool Logic::putStone(int r, int c)
 {
 	if (dat[r][c] > 0)	return false;	//이미 데이터가 있는 상태면 취소
-	if (white + black == 64)	return true;
+	if (white + black == 64 && game == 2)	return true;
 
-	checkAndReverse(r, c);			// 돌을 놓을 수 있는지 체크
+	int a;
+	a = checkAndReverse(r, c);
+	if (a == 2)	return false;
 
 	dat[r][c] = turn + 1;	// 배열값을 1또는 2로 수정
+	if (a == 1)	return true;			// 돌을 놓을 수 있는지 체크
 
 	turn = 1 - turn;		// 턴 변경
 	return false;
 	// 이 함수의 반환값이 true 면 게임을 종료시킨다
 }
 
-void Logic::checkAndReverse(int r, int c)			// (pr, pc) : 좌표 지점
+int Logic::checkAndReverse(int r, int c)			// (pr, pc) : 좌표 지점
 {
-	int pr = r, pc = c, flag = 0, cnt = 0, current = turn + 1;
+	int pr, pc, flag = 0, cnt = 0, current = turn + 1, flag2 = 0;
 
-	for (;; add(0, pr, c))
+	if (game == 2)	current = 1 + (1 - turn);
+
+	// 상
+	for (pr = r - 1; pr >= 0; add(0, pr, c))
 	{
+		if (game == 2 && dat[pr][c] != current && dat[pr][c] != 0) { flag++; break; }
 		if (dat[pr][c] != current)	break;
 		cnt++;
 	}
+	if (game == 2 && flag == 1 && cnt != 0)
+	{
+		for (int i = r; i > pr; i--)
+			dat[i][c] = turn + 1;
+		flag2++;
+	}
+	if (cnt == 4 && game == 1)	return 1;
+
+	// 하
+	flag = 0;
+	for (pr = r + 1; pr < size; add(1, pr, c))
+	{
+		if (game == 2 && dat[pr][c] != current && dat[pr][c] != 0) { flag++; break; }
+		if (dat[pr][c] != current)	break;
+		cnt++;
+	}
+	if (game == 2 && flag == 1 && cnt != 0)
+	{
+		for (int i = r; i < pr; i++)
+			dat[i][c] = turn + 1;
+		flag2++;
+	}
+	if (cnt == 4 && game == 1)	return 1;
+
+	// 좌
+	flag = 0;
+	for (pc = c - 1; pc >= 0; add(2, r, pc))
+	{
+		if (game == 2 && dat[r][pc] != current && dat[r][pc] != 0) { flag++; break; }
+		if (dat[r][pc] != current)	break;
+		cnt++;
+	}
+	if (game == 2 && flag == 1 && cnt != 0)
+	{
+		for (int i = c; i > pc; i--)
+			dat[r][i] = turn + 1;
+		flag2++;
+	}
+	if (cnt == 4 && game == 1)	return 1;
+
+	// 우
+	flag = 0;
+	for (pc = c + 1; pc < size; add(3, r, pc))
+	{
+		if (game == 2 && dat[r][pc] != current && dat[r][pc] != 0) { flag++; break; }
+		if (dat[r][pc] != current)	break;
+		cnt++;
+	}
+	if (game == 2 && flag == 1 && cnt != 0)
+	{
+		for (int i = c; i < pc; i++)
+			dat[r][i] = turn + 1;
+		flag2++;
+	}
+	if (cnt == 4 && game == 1)	return 1;
+
+	// 우상
+	flag = 0;
+	for (pc = c + 1, pr = r - 1; pc < size && pr >= 0; add(5, pr, pc))
+	{
+		if (game == 2 && dat[pr][pc] != current && dat[pr][pc] != 0) { flag++; break; }
+		if (dat[pr][pc] != current)	break;
+		cnt++;
+	}
+	if (game == 2 && flag == 1 && cnt != 0)
+	{
+		for (int i = r, j = c; i > pr && j < pc; add(5, i, j))
+			dat[i][j] = turn + 1;
+		flag2++;
+	}
+	if (cnt == 4 && game == 1)	return 1;
+
+	// 우하
+	flag = 0;
+	for (pc = c + 1, pr = r + 1; pc < size && pr < size; add(4, pr, pc))
+	{
+		if (game == 2 && dat[pr][pc] != current && dat[pr][pc] != 0) { flag++; break; }
+		if (dat[pr][pc] != current)	break;
+		cnt++;
+	}
+	if (game == 2 && flag == 1 && cnt != 0)
+	{
+		for (int i = r, j = c; i < pr && j < pc; add(4, i, j))
+			dat[i][j] = turn + 1;
+		flag2++;
+	}
+	if (cnt == 4 && game == 1)	return 1;
+
+	// 좌상
+	flag = 0;
+	for (pc = c - 1, pr = r - 1; pc >= 0 && pr >= 0; add(6, pr, pc))
+	{
+		if (game == 2 && dat[pr][pc] != current && dat[pr][pc] != 0) { flag++; break; }
+		if (dat[pr][pc] != current)	break;
+		cnt++;
+	}
+	if (game == 2 && flag == 1 && cnt != 0)
+	{
+		for (int i = r, j = c; i > pr && j > pc; add(6, i, j))
+			dat[i][j] = turn + 1;
+		flag2++;
+	}
+	if (cnt == 4 && game == 1)	return 1;
+
+	// 좌하
+	flag = 0;
+	for (pc = c - 1, pr = r + 1; pc >= 0 && pr < size; add(7, pr, pc))
+	{
+		if (game == 2 && dat[pr][pc] != current && dat[pr][pc] != 0) { flag++; break; }
+		if (dat[pr][pc] != current)	break;
+		cnt++;
+	}
+	if (game == 2 && flag == 1 && cnt != 0)
+	{
+		for (int i = r, j = c; i < pr && j > pc; add(7, i, j))
+			dat[i][j] = turn + 1;
+		flag2++;
+	}
+	if (cnt == 4 && game == 1)	return 1;
+
+	if (flag2 == 0 && game == 2)	return 2;
+	return 0;
 }
 
 void Logic::add(int type, int& r, int& c)	// 참조매개인자(&)는 함수 외부의 변수값을 변경하겠다는 의미
@@ -114,11 +243,11 @@ void Logic::add(int type, int& r, int& c)	// 참조매개인자(&)는 함수 외
 	case 5:	// horizontal, 우상 대각. 행 감소, 열 증가
 		r--;  c++; break;
 
-	case 6:	// horizontal, 좌하 대각. 행, 열 증가
-		r++; c--; break;
-
-	case 7:	// horizontal, 좌상 대각. 행, 열 증가
+	case 6:	// horizontal, 좌상 대각. 행, 열 감소
 		r--; c--; break;
+	
+	case 7:	// horizontal, 좌하 대각. 행, 열 증가
+		r++; c--; break;
 	}
 }
 
@@ -247,14 +376,14 @@ int main()
 		rd.printBoard(g);	// 바둑판 출력
 		if (bGameOver)		// 게임 종료 체크
 		{
-			if (lg.white > lg.black)	cout << "White(○) Win!";
+			if (g == 1)cout << "Game Over\n";
+			else if (lg.white > lg.black && g == 1)	cout << "White(○) Win!";
 			else cout << " Black (●) Win! ";
-			cout << "Game Over\n";
 			break;
 		}
 
 		lg.checkStone();
-		if(g == 2)	cout << "Black (●) = " << lg.black << ", " << "White(○) = " << lg.white << '\n';
+		if (g == 2)	cout << "Black (●) = " << lg.black << ", " << "White(○) = " << lg.white << '\n';
 		if (lg.turn == 0)	cout << "Black (●)turn, ";
 		else cout << "White(○)  turn, ";
 		cout << "Input Position : ";
