@@ -1,0 +1,49 @@
+/*
+	2021-02-08 BOJ - 2579(계단 오르기)
+
+	d[n] 규정. d[n] : n개의 계단으로 게임을 해 얻을 수 있는 총 점수의 최대값
+
+	3번 규칙, 마지막 계단은 무조건 밟아야 한다 를 이용해서 2가지로 생각할 수 있다.
+	1. 마지막 전 계단을 밟은 경우
+	2. 마지막 전 계단을 밟지 않은 경우
+
+	1번은 마지막 전 계단을 밟았으므로 마지막 전전의 계단은 밟지 못한다.
+	2번은 마지막 전 계단을 안 밟아서 마지막 전전의 계단을 밟고 왔다.
+
+	이를 통해 점화식을 도출하면
+	1. d[i - 3] + amount[i - 1] + amount[i]
+	2. d[i - 2] + amount[i]
+
+	d[i] = max(d[i - 3] + amount[i - 1] + amount[i], d[i - 2] + amount[i]);
+	가 나온다.
+*/
+
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int d[301];
+int amount[301];
+
+int main()
+{
+	int stairs;
+	cin >> stairs;
+
+	for (int i = 1; i <= stairs; i++)
+	{
+		cin >> amount[i];
+	}
+
+	// Base Check
+	d[1] = amount[1];
+	d[2] = amount[1] + amount[2];
+	d[3] = max(amount[1] + amount[3], amount[2] + amount[3]);
+
+	for (int i = 4; i <= stairs; i++)
+	{
+		d[i] = max(d[i - 3] + amount[i - 1] + amount[i], d[i - 2] + amount[i]);
+	}
+
+	cout << d[stairs];	
+}
